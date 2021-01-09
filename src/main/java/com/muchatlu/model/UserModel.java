@@ -18,8 +18,10 @@ public class UserModel {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	private String sessionId;
 	private String username;
 	private String password;
-	private String emailId;
+	private String email;
 	private String avatar;
+	private String status;
 }

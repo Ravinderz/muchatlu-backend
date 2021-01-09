@@ -21,8 +21,10 @@ public class MessageModel {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private Long userIdFrom;
+	private String usernameFrom;
+	private String avatarFrom;
+	private String usernameTo;
 	private Long userIdTo;
-	private String username;
 	private LocalDateTime timestamp;
 	private String message;
 	
