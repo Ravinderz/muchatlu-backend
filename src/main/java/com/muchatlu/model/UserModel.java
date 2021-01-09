@@ -23,5 +23,5 @@ public class UserModel {
 	private String password;
 	private String email;
 	private String avatar;
-	private String status;
+	private Boolean isOnline;
 }

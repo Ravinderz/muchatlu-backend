@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,24 @@ public class UserService {
 	
 	public UserModel login(UserModel user) {
 		return userRepo.findByEmailAndPassword(user.getEmail(), user.getPassword());
+	}
+	
+	public UserModel getUserBySessionId(String sessionId) {
+		Optional<UserModel> userModel =  userRepo.findBySessionId(sessionId);
+		if(userModel.isPresent()) {
+			return userModel.get();
+		}else
+			return null;
+		
+	}
+	
+	@Transactional
+	public int updateSessionIdByUserId(String sessionId,Long userId) {
+		return userRepo.updateSessionIdForAUser(sessionId, userId);
+	}
+	
+	public Optional<UserModel> getUserByUsername(String email) {
+		return userRepo.findByEmail(email);
 	}
 	
 	public List<UserModel> getAllUsers(Long UserId){

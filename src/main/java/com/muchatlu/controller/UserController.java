@@ -3,6 +3,9 @@ package com.muchatlu.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,30 +13,41 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.muchatlu.model.MyUserDetails;
 import com.muchatlu.model.UserModel;
-import com.muchatlu.service.UserOnlineService;
 import com.muchatlu.service.UserService;
-
-import io.reactivex.Observable;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 	
 	@Autowired
-	UserService userService;
+	AuthenticationManager authManager;
 	
 	@Autowired
-	UserOnlineService onlineService;
-
+	UserService userService;
+	
 	@PostMapping("/register")
 	public UserModel register(@RequestBody UserModel user){
 		return userService.register(user);
 	}
 	
 	@PostMapping("/login")
-	public UserModel login(@RequestBody UserModel user){
-		return userService.login(user);
+	public MyUserDetails login(@RequestBody UserModel user) throws Exception{
+		Authentication principle = null;
+		try {
+			principle = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
+			
+			System.out.println("principle :: "+principle);
+		}catch(Exception e) {
+			throw new Exception("Incorrect username and password");
+		}
+		
+		MyUserDetails details = (MyUserDetails) principle.getPrincipal();
+		details.setIsOnline(true);
+		details.setSessionId(null);
+		details.setPassword(null);
+		return details;
 	}
 	
 	@GetMapping("/getAllUsers/{userId}")
