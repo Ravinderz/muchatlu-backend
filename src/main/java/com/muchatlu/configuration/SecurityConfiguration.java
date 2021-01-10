@@ -35,7 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors();
 			http.authorizeRequests()
-			.antMatchers("/login","/register","/chat/**","/h2-console/**")
+			//.antMatchers("/login","/register","/chat/**","/h2-console/**")
+			.antMatchers("/**")
 			.permitAll()
 			.anyRequest()
 			.authenticated();

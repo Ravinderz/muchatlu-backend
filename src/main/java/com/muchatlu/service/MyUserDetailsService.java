@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.muchatlu.model.MyUserDetails;
-import com.muchatlu.model.UserModel;
+import com.muchatlu.model.User;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService{
@@ -19,7 +19,7 @@ public class MyUserDetailsService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<UserModel> user = userService.getUserByUsername(username);
+		Optional<User> user = userService.getUserByUsername(username);
 		
 		user.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		

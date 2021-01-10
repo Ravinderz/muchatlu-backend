@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStatusModel {
+public class UserStatus {
 
 	private Long userId;
 	private String username;

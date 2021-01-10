@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.muchatlu.model.UserModel;
+import com.muchatlu.model.User;
 import com.muchatlu.repository.UserRepository;
 
 @Service
@@ -18,17 +18,17 @@ public class UserService {
 	@Autowired
 	UserRepository userRepo;
 	
-	public UserModel register(UserModel user) {
+	public User register(User user) {
 		userRepo.save(user);
 		return user;
 	}
 	
-	public UserModel login(UserModel user) {
+	public User login(User user) {
 		return userRepo.findByEmailAndPassword(user.getEmail(), user.getPassword());
 	}
 	
-	public UserModel getUserBySessionId(String sessionId) {
-		Optional<UserModel> userModel =  userRepo.findBySessionId(sessionId);
+	public User getUserBySessionId(String sessionId) {
+		Optional<User> userModel =  userRepo.findBySessionId(sessionId);
 		if(userModel.isPresent()) {
 			return userModel.get();
 		}else
@@ -41,18 +41,22 @@ public class UserService {
 		return userRepo.updateSessionIdForAUser(sessionId, userId);
 	}
 	
-	public Optional<UserModel> getUserByUsername(String email) {
+	public Optional<User> getUserByUsername(String email) {
 		return userRepo.findByEmail(email);
 	}
 	
-	public List<UserModel> getAllUsers(Long UserId){
-		List<UserModel> list = new ArrayList<>();
+	public List<User> getAllUsers(Long UserId){
+		List<User> list = new ArrayList<>();
 		userRepo.findAll().forEach(list::add);
 		return list;
 	}
 	
-	public UserModel getUserById(Long id) {
-		Optional<UserModel> userModel = userRepo.findById(id);
+	public List<User> saveAllUsers(List<User> users){
+		return userRepo.saveAll(users);
+	}
+	
+	public User getUserById(Long id) {
+		Optional<User> userModel = userRepo.findById(id);
 		if(userModel.isPresent()) {
 			return userModel.get();
 		}else
