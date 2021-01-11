@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.swing.event.TableColumnModelListener;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.muchatlu.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.muchatlu.model.FriendRequest;
-import com.muchatlu.model.FriendRequestModel;
-import com.muchatlu.model.MyUserDetails;
-import com.muchatlu.model.User;
 import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.UserService;
 
@@ -41,7 +39,7 @@ public class UserController {
 	
 	
 	@PostMapping("/register")
-	public User register(@RequestBody User user){
+	public User register(@RequestBody User user) throws Exception {
 		return userService.register(user);
 	}
 	

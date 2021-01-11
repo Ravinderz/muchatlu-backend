@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import com.muchatlu.exception.UserExistsException;
+import com.muchatlu.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,11 @@ public class UserService {
 	@Autowired
 	UserRepository userRepo;
 	
-	public User register(User user) {
+	public User register(User user) throws Exception {
+		Optional<User> newUser = userRepo.findByEmail(user.getEmail());
+		if(newUser.isPresent()){
+			throw new UserExistsException("User already exists");
+		}
 		userRepo.save(user);
 		return user;
 	}
@@ -34,9 +40,10 @@ public class UserService {
 		Optional<User> userModel =  userRepo.findBySessionId(sessionId);
 		if(userModel.isPresent()) {
 			return userModel.get();
-		}else
-			return null;
-		
+		}else{
+			throw new UserNotFoundException("User not found");
+		}
+
 	}
 	
 	@Transactional
