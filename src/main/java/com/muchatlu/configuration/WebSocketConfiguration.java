@@ -52,7 +52,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
         	String sessionId = request.getURI().toString().split("/chat/")[1].split("/")[1];
         	attributes.put(userId, sessionId);
         	
-        	updateQuery(sessionId,  Long.parseLong(userId));
+        	updateQuery(sessionId, true ,
+        			Long.parseLong(userId));
         	
         	Principal principal = request.getPrincipal();
         	 if (principal == null) {
@@ -63,8 +64,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
             return principal;
         }
         
-        private void updateQuery(String sessionId,Long userId) {
-        	userService.updateSessionIdByUserId(sessionId,userId);
+        private void updateQuery(String sessionId,boolean isOnline,Long userId) {
+        	userService.updateSessionIdByUserId(sessionId,isOnline,userId);
         }
         
     }

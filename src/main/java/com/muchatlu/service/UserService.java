@@ -40,8 +40,8 @@ public class UserService {
 	}
 	
 	@Transactional
-	public int updateSessionIdByUserId(String sessionId,Long userId) {
-		return userRepo.updateSessionIdForAUser(sessionId, userId);
+	public int updateSessionIdByUserId(String sessionId,boolean isOnline,Long userId) {
+		return userRepo.updateSessionIdForAUser(sessionId, isOnline, userId);
 	}
 	
 	public Optional<User> getUserByUsername(String email) {

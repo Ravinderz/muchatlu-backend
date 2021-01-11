@@ -45,7 +45,7 @@ public class PresenceEventListener {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String sessionId = headers.getSessionId();
 		User user = userService.getUserBySessionId(sessionId);
-		userService.updateSessionIdByUserId(null, user.getId());
+		userService.updateSessionIdByUserId(null, false, user.getId());
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);
 		messagingTemplate.convertAndSend(logoutDestination, status);
 	}
