@@ -1,8 +1,11 @@
 package com.muchatlu.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -57,8 +60,14 @@ public class UserService {
 	
 	public User getUserById(Long id) {
 		Optional<User> userModel = userRepo.findById(id);
+		User user = new User();
+		Set<User> set = new HashSet<>();
 		if(userModel.isPresent()) {
-			return userModel.get();
+			user = userModel.get();
+			set.addAll(user.getFriends().stream().filter(p -> p instanceof User).collect(Collectors.toList()));
+			set.addAll(user.getFriendsTo().stream().filter(p -> p instanceof User).collect(Collectors.toList()));
+			user.getFriends().addAll(set);
+			return user;
 		}else
 			return null;
 	}

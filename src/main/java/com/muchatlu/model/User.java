@@ -32,10 +32,8 @@ public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	@JsonIgnore
 	private String sessionId;
 	private String username;
-	@JsonIgnore
 	private String password;
 	private String email;
 	private String avatar;
@@ -49,6 +47,7 @@ public class User {
 	private List<User> friends  = new ArrayList<>();
 	
 	@ManyToMany(mappedBy = "friends")
+	@JsonIgnore
 	private List<User> friendsTo  = new ArrayList<>();
 	
 

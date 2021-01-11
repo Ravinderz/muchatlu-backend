@@ -30,8 +30,6 @@ public class PresenceEventListener {
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String sessionId = headers.getSessionId();
-		System.out.println(sessionId);
-		
 		User user = userService.getUserBySessionId(sessionId);
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),user.getSessionId() != null ? true : false);
 		messagingTemplate.convertAndSend(loginDestination, status);
@@ -40,14 +38,12 @@ public class PresenceEventListener {
 	
 	@EventListener
 	private void handleSessionConnected(SessionSubscribeEvent event) {
-		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 	}
 	
 	@EventListener
 	private void handleSessionDisconnect(SessionDisconnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String sessionId = headers.getSessionId();
-		System.out.println(sessionId);
 		User user = userService.getUserBySessionId(sessionId);
 		userService.updateSessionIdByUserId(null, user.getId());
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);

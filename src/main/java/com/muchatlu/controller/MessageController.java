@@ -28,14 +28,4 @@ public class MessageController {
 		simpMessageTemplate.convertAndSend("/topic/"+userId+"/messages",message);
 	}
 	
-//	@MessageMapping("/chat.login")
-//	public void onlineStatus(@DestinationVariable Long userId,MessageModel message,Principal principal) {
-//		simpMessageTemplate.convertAndSend("/topic/public/login",message);
-//	}
-//	
-//	@MessageMapping("/chat.logout")
-//	public void onlineStatus(@DestinationVariable Long userId,MessageModel message,Principal principal) {
-//		simpMessageTemplate.convertAndSend("/topic/public/login",message);
-//	}
-//	
 }

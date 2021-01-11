@@ -2,6 +2,8 @@ package com.muchatlu.controller;
 
 import java.util.List;
 
+import javax.swing.event.TableColumnModelListener;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,8 +50,6 @@ public class UserController {
 		Authentication principle = null;
 		try {
 			principle = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
-			
-			System.out.println("principle :: "+principle);
 		}catch(Exception e) {
 			throw new Exception("Incorrect username and password");
 		}
@@ -81,14 +81,10 @@ public class UserController {
 	
 	@PostMapping("/updateFriendRequest")
 	public FriendRequestModel updateFriendRequest(@RequestBody FriendRequest request) {
-		FriendRequestModel model = friendRequestService.updateFriendRequest(request); 
+		FriendRequestModel model = friendRequestService.updateFriendRequest(request);
 		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",model);
 		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestFromUserId()+".friendRequest",model);
 		return model;
 	}
 	
-//	@GetMapping("/getUsersStatus}")
-//	public Observable<UserModel> getUserStatus(){
-//		return onlineService.getUserOnlineStatus(user);
-//	}
 }

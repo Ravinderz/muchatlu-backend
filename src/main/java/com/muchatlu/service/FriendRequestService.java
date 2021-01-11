@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.muchatlu.model.FriendRequest;
 import com.muchatlu.model.FriendRequestModel;
+import com.muchatlu.model.MyUserDetails;
+import com.muchatlu.model.RequestUserTo;
 import com.muchatlu.model.User;
 import com.muchatlu.repository.FriendRequestRepository;
 
@@ -50,16 +52,9 @@ public class FriendRequestService {
 			User fromUser = userService.getUserById(request.getRequestFromUserId());
 			model.setRequestFromUser(fromUser);
 			User toUser = userService.getUserByUsername(request.getRequestToEmailId()).get();
-			model.setRequestToUser(toUser);
+			model.setRequestToUser(new RequestUserTo(toUser));
 			fromUser.getFriends().add(toUser);
-			//toUser.getFriends().add(fromUser);
-			System.out.println(fromUser);
-			System.out.println(toUser);
 			userService.saveAllUsers(Arrays.asList(fromUser));
-//			toUser.getFriendsTo().add(fromUser);
-//			userService.saveAllUsers(Arrays.asList(toUser));
-			
-			
 		}
 		return model;
 	}

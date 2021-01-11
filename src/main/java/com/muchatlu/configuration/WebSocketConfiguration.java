@@ -48,7 +48,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
         @Override
         protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, 
                                           Map<String, Object> attributes) {
-        	System.out.println(request);
         	String userId = request.getURI().getQuery().split("=")[1];
         	String sessionId = request.getURI().toString().split("/chat/")[1].split("/")[1];
         	attributes.put(userId, sessionId);
@@ -61,8 +60,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
                  authorities.add(new SimpleGrantedAuthority("USER_ROLE"));
                  principal = new AnonymousAuthenticationToken("user", userId, authorities);
              }
-        	System.out.println(request.getPrincipal());
-        	System.out.println(wsHandler);
             return principal;
         }
         
@@ -72,23 +69,5 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
         
     }
 	
-//	 @Override
-//	    public void configureClientInboundChannel(ChannelRegistration registration) {
-//	        registration.interceptors(new ChannelInterceptor() {
-//	            @Override
-//	            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//	                StompHeaderAccessor accessor =
-//	                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//	                
-//	                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-//	                	System.out.println(accessor.getNativeHeader("X-Authorization"));
-//	                	System.out.println(message);
-//	                	System.out.println(accessor);
-//	                }
-//	                return message;
-//	            }
-//	        });
-//	    }
-
 	
 }
