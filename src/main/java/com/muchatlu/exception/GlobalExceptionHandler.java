@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<> handleUserNotFoundException(Exception ex, WebRequest request){
+    public final ResponseEntity<Object> handleUserNotFoundException(Exception ex, WebRequest request){
         ex.printStackTrace();
         ErrorResponse err = new ErrorResponse(ex.getMessage(),request.getDescription(false), LocalDateTime.now());
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
