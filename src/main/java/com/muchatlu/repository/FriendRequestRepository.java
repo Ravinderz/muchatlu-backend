@@ -8,10 +8,17 @@ import org.springframework.stereotype.Repository;
 
 import com.muchatlu.model.FriendRequest;
 
+import java.util.List;
+
 @Repository
 public interface FriendRequestRepository extends JpaRepository<FriendRequest, Long>{
 
 	@Modifying
 	@Query("update FriendRequest set status = :status where id = :id")
 	int updateFriendRequest(@Param("status") String status, @Param("id") Long id);
+
+	List<FriendRequest> findAllByRequestFromUserId(@Param("id") Long id);
+
+	List<FriendRequest> findAllByRequestToUserId(@Param("id") Long id);
+
 }

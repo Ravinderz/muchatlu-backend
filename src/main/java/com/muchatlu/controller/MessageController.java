@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.muchatlu.model.Message;
 import com.muchatlu.service.MessageService;
 
+import java.time.LocalDateTime;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MessageController {
@@ -24,6 +26,7 @@ public class MessageController {
 
 	@MessageMapping("/chat.{userId}")
 	public void sendMessage(@DestinationVariable("userId") Long userId,@Payload Message message,@Header(name = "simpSessionId") String sessionId) {
+		message.setTimestamp(LocalDateTime.now());
 		messageService.saveMessage(message);
 		simpMessageTemplate.convertAndSend("/topic/"+userId+"/messages",message);
 	}

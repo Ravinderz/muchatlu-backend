@@ -1,19 +1,16 @@
 package com.muchatlu.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.muchatlu.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.muchatlu.model.FriendRequest;
-import com.muchatlu.model.FriendRequestModel;
-import com.muchatlu.model.MyUserDetails;
-import com.muchatlu.model.RequestUserTo;
-import com.muchatlu.model.User;
 import com.muchatlu.repository.FriendRequestRepository;
 
 @Service
@@ -24,6 +21,9 @@ public class FriendRequestService {
 	
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	ConversationService conversationService;
 	
 	private static final String ACCEPTED = "ACCEPTED";
 	private static final String DECLINED = "DECLINED";
@@ -53,9 +53,19 @@ public class FriendRequestService {
 			model.setRequestFromUser(fromUser);
 			User toUser = userService.getUserByUsername(request.getRequestToEmailId()).get();
 			model.setRequestToUser(new RequestUserTo(toUser));
+			model.setRequestToUserId(toUser.getId());
 			fromUser.getFriends().add(toUser);
 			userService.saveAllUsers(Arrays.asList(fromUser));
+			conversationService.saveConversation(model);
+
 		}
 		return model;
+	}
+
+	public List<FriendRequest> getFriendRequestsByUserId(Long userId){
+		List<FriendRequest> friendRequests = new ArrayList<>();
+		friendRequests.addAll(repo.findAllByRequestFromUserId(userId));
+		friendRequests.addAll(repo.findAllByRequestToUserId(userId));
+		return friendRequests;
 	}
 }

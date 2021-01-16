@@ -22,7 +22,7 @@ import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.UserService;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
 public class UserController {
 	
 	@Autowired
@@ -83,6 +83,11 @@ public class UserController {
 		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",model);
 		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestFromUserId()+".friendRequest",model);
 		return model;
+	}
+
+	@GetMapping("/getFriendRequests/{userId}")
+	public List<FriendRequest> getFriendRequests(@PathVariable Long userId){
+		return friendRequestService.getFriendRequestsByUserId(userId);
 	}
 	
 }

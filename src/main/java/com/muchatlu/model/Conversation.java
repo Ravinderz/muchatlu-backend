@@ -1,18 +1,18 @@
 package com.muchatlu.model;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Message {
+public class Conversation {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -23,10 +23,8 @@ public class Message {
 	private String avatarTo;
 	private String usernameTo;
 	private Long userIdTo;
-	private LocalDateTime timestamp;
-	private String message;
-
-	@Column(name="CONVERSATION_ID")
-	private long conversationId;
-
+	@OneToMany
+	@JoinColumn(name="CONVERSATION_ID", referencedColumnName="ID")
+	private List<Message> message;
+	
 }

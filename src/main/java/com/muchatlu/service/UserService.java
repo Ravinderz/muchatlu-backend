@@ -78,4 +78,8 @@ public class UserService {
 		}else
 			return null;
 	}
+
+	public String getUserAvatar(Long id){
+		return userRepo.getUserAvatar(id);
+	}
 }
