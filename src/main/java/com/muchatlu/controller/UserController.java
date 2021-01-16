@@ -6,6 +6,7 @@ import javax.swing.event.TableColumnModelListener;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.muchatlu.model.*;
+import com.muchatlu.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,9 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	ConversationService conversationService;
 	
 	@Autowired
 	FriendRequestService friendRequestService;
@@ -89,5 +93,14 @@ public class UserController {
 	public List<FriendRequest> getFriendRequests(@PathVariable Long userId){
 		return friendRequestService.getFriendRequestsByUserId(userId);
 	}
-	
+
+	@GetMapping("/getConversationId/{fromId}/{toId}")
+	public Long getConversationId(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId){
+		return conversationService.getConversationId(fromId,toId);
+	}
+
+	@GetMapping("/getConversation/{fromId}/{toId}")
+	public Conversation getConversation(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId){
+		return conversationService.getConversation(fromId,toId);
+	}
 }

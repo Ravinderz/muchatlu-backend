@@ -27,6 +27,6 @@ public class Message {
 	private String message;
 
 	@Column(name="CONVERSATION_ID")
-	private long conversationId;
+	private Long conversationId;
 
 }

@@ -14,5 +14,12 @@ import java.util.List;
 public interface ConversationRepository extends JpaRepository<Conversation, Long>{
 
 
+    @Query("select id from Conversation where user_id_from=:fromId and user_id_to=:toId")
+    public Long getConversationId(@Param("fromId") Long fromId,@Param("toId") Long toId);
+
+//    @Query("select * from Conversation where user_id_from=:fromId and user_id_to=:toId")
+//    public Conversation getConversation(@Param("fromId") Long fromId,@Param("toId") Long toId);
+
+    public Conversation findByUserIdFromAndUserIdTo(Long fromId, Long toId);
 
 }

@@ -46,5 +46,21 @@ public class ConversationService {
 
 	}
 
+	public Long getConversationId(Long fromId,Long toId){
+		Long id = repo.getConversationId(fromId, toId);
+		if(id == null){
+			id = repo.getConversationId(toId,fromId);
+		}
+		return id;
+	}
+
+	public Conversation getConversation(Long fromId,Long toId){
+		Conversation convo = repo.findByUserIdFromAndUserIdTo(fromId, toId);
+		if(convo == null){
+			convo = repo.findByUserIdFromAndUserIdTo(toId,fromId);
+		}
+		return convo;
+	}
+
 
 }
