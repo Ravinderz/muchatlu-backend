@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.event.TableColumnModelListener;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.model.*;
 import com.muchatlu.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,4 +104,16 @@ public class UserController {
 	public Conversation getConversation(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId){
 		return conversationService.getConversation(fromId,toId);
 	}
+
+	@GetMapping("/getUserConversations/{id}")
+	public List<ConversationDto> getUserConversations(@PathVariable("id") Long id){
+		return conversationService.getConversationsForUser(id);
+	}
+
+//	@GetMapping("/getUserConversations/{id}")
+//	public String getUserConversations(@PathVariable("id") Long id){
+//		return conversationService.getConversationsForUser(id);
+//	}
+
+
 }
