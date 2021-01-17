@@ -28,6 +28,7 @@ public class User {
 	private String email;
 	private String avatar;
 	private Boolean isOnline;
+	private String status;
 	
 	@ManyToMany
 	@JoinTable(name="UserFriends",

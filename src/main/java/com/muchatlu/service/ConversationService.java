@@ -70,10 +70,15 @@ public class ConversationService {
 
 	public List<ConversationDto> getConversationsForUser(Long id){
 		List<Object[]> list = repo.getConversationForUser(id);
-		if(list == null && list.size() == 0){
-			list = repo.getConversationForUserAlt(id);
-		}
+		List<Object[]> Altlist = repo.getConversationForUserAlt(id);
+
 		List<ConversationDto> conversationList = new ArrayList<>();
+		PopulateConvoList(list, conversationList);
+		PopulateConvoList(Altlist, conversationList);
+		return conversationList;
+	}
+
+	private void PopulateConvoList(List<Object[]> list, List<ConversationDto> conversationList) {
 		if(list != null && list.size() > 0) {
 			list.stream().forEach(o -> {
 				ConversationDto dto = new ConversationDto();
@@ -125,7 +130,6 @@ public class ConversationService {
 			});
 
 		}
-		return conversationList;
 	}
 
 
