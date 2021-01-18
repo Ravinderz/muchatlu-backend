@@ -15,7 +15,7 @@ import com.muchatlu.service.MessageService;
 import java.time.LocalDateTime;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*",allowCredentials = "true")
 public class MessageController {
 	
 	@Autowired
