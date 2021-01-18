@@ -107,6 +107,11 @@ public class PersonController {
 		return conversationService.getConversationsForUser(id);
 	}
 
+	@GetMapping("/getUserDetails/{value}")
+	public Person getUserDetails(@PathVariable("value") String value){
+		return personService.getUserDetails(value);
+	}
+
 //	@GetMapping("/getUserConversations/{id}")
 //	public String getUserConversations(@PathVariable("id") Long id){
 //		return conversationService.getConversationsForUser(id);

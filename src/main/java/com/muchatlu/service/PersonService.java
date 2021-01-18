@@ -82,4 +82,20 @@ public class PersonService {
 	public String getUserAvatar(Long id){
 		return personRepo.getUserAvatar(id);
 	}
+
+	public Person getUserDetails(String value){
+		Person person = new Person();
+		Optional<Person> optionalPerson = null;
+		if(value.contains("@")){
+			optionalPerson = personRepo.findByEmail(value);
+		}else{
+			optionalPerson = personRepo.findById(Long.parseLong(value));
+		}
+		if(optionalPerson != null && optionalPerson.isPresent()){
+			person = optionalPerson.get();
+		}
+
+		return person;
+
+	}
 }

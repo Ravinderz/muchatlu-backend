@@ -25,9 +25,9 @@ public class FriendRequestService {
 	@Autowired
 	ConversationService conversationService;
 	
-	private static final String ACCEPTED = "ACCEPTED";
-	private static final String DECLINED = "DECLINED";
-	private static final String PENDING = "PENDING";
+	private static final String ACCEPTED = "Accepted";
+	private static final String DECLINED = "Rejected";
+	private static final String PENDING = "Pending";
 	
 	public FriendRequest saveFriendRequest(FriendRequest request) {
 		Optional<Person> user = personService.getUserByUsername(request.getRequestToEmailId());
