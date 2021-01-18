@@ -57,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	CorsConfigurationSource corsConfigurationSource()
 	{
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com","https://www.muchatlu.in","http://muchatlu.in"));
 		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS","HEAD","DELETE"));
 		configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin",
