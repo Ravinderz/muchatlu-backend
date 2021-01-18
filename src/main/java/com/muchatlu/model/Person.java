@@ -18,7 +18,7 @@ import java.util.List;
 @JsonIdentityInfo(
 		generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 @Table(name = "person")
-public class User {
+public class Person {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,11 +36,11 @@ public class User {
 	 joinColumns=@JoinColumn(name="FriendOfId"),
 	 inverseJoinColumns=@JoinColumn(name="friendToId")
 	)
-	private List<User> friends  = new ArrayList<>();
+	private List<Person> friends  = new ArrayList<>();
 	
 	@ManyToMany(mappedBy = "friends")
 	@JsonIgnore
-	private List<User> friendsTo  = new ArrayList<>();
+	private List<Person> friendsTo  = new ArrayList<>();
 	
 
 }

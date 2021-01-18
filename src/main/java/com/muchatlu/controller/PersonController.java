@@ -2,9 +2,6 @@ package com.muchatlu.controller;
 
 import java.util.List;
 
-import javax.swing.event.TableColumnModelListener;
-
-import com.fasterxml.jackson.annotation.JsonView;
 import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.model.*;
 import com.muchatlu.service.ConversationService;
@@ -21,17 +18,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.muchatlu.service.FriendRequestService;
-import com.muchatlu.service.UserService;
+import com.muchatlu.service.PersonService;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class UserController {
+public class PersonController {
 	
 	@Autowired
 	AuthenticationManager authManager;
 	
 	@Autowired
-	UserService userService;
+	PersonService personService;
 
 	@Autowired
 	ConversationService conversationService;
@@ -44,12 +41,12 @@ public class UserController {
 	
 	
 	@PostMapping("/register")
-	public User register(@RequestBody User user) throws Exception {
-		return userService.register(user);
+	public Person register(@RequestBody Person user) throws Exception {
+		return personService.register(user);
 	}
 	
 	@PostMapping("/login")
-	public MyUserDetails login(@RequestBody User user) throws Exception{
+	public MyUserDetails login(@RequestBody Person user) throws Exception{
 		Authentication principle = null;
 		try {
 			principle = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
@@ -65,13 +62,13 @@ public class UserController {
 	}
 	
 	@GetMapping("/getAllUsers/{userId}")
-	public List<User> getAllUsers(@PathVariable Long userId){
-		return userService.getAllUsers(userId);
+	public List<Person> getAllUsers(@PathVariable Long userId){
+		return personService.getAllUsers(userId);
 	}
 	
 	@GetMapping("/getAllFriends/{userId}")
-	public User getFriendsOfUser(@PathVariable Long userId){
-		return userService.getUserById(userId);
+	public Person getFriendsOfUser(@PathVariable Long userId){
+		return personService.getUserById(userId);
 	}
 	
 	@PostMapping("/sendFriendRequest")

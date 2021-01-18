@@ -18,7 +18,7 @@ public class RequestUserTo {
 	private Boolean isOnline;
 
 	
-	public RequestUserTo(User user) {
+	public RequestUserTo(Person user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
 		this.password = user.getPassword();

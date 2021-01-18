@@ -9,17 +9,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.muchatlu.model.MyUserDetails;
-import com.muchatlu.model.User;
+import com.muchatlu.model.Person;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService{
 	
 	@Autowired
-	UserService userService;
+	PersonService personService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = userService.getUserByUsername(username);
+		Optional<Person> user = personService.getUserByUsername(username);
 		
 		user.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		

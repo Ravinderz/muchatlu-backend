@@ -9,9 +9,9 @@ import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
-import com.muchatlu.model.User;
+import com.muchatlu.model.Person;
 import com.muchatlu.model.UserStatus;
-import com.muchatlu.service.UserService;
+import com.muchatlu.service.PersonService;
 
 @Component
 public class PresenceEventListener {
@@ -20,7 +20,7 @@ public class PresenceEventListener {
 	private SimpMessagingTemplate messagingTemplate;
 	
 	@Autowired
-	UserService userService;
+	PersonService userService;
 	
 	public static final String loginDestination = "/topic/public.login";
 	
@@ -30,7 +30,7 @@ public class PresenceEventListener {
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String sessionId = headers.getSessionId();
-		User user = userService.getUserBySessionId(sessionId);
+		Person user = userService.getUserBySessionId(sessionId);
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),user.getSessionId() != null ? true : false);
 		messagingTemplate.convertAndSend(loginDestination, status);
 		
@@ -44,7 +44,7 @@ public class PresenceEventListener {
 	private void handleSessionDisconnect(SessionDisconnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
 		String sessionId = headers.getSessionId();
-		User user = userService.getUserBySessionId(sessionId);
+		Person user = userService.getUserBySessionId(sessionId);
 		userService.updateSessionIdByUserId(null, false, user.getId());
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);
 		messagingTemplate.convertAndSend(logoutDestination, status);

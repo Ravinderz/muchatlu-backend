@@ -8,18 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.muchatlu.model.User;
+import com.muchatlu.model.Person;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{ 
+public interface PersonRepository extends JpaRepository<Person, Long>{
 
-	User findByEmailAndPassword(String email,String password);
+	Person findByEmailAndPassword(String email, String password);
 	
-	Optional<User> findById(Long id);
+	Optional<Person> findById(Long id);
 	
-	Optional<User> findByEmail(String email);
+	Optional<Person> findByEmail(String email);
 	
-	Optional<User> findBySessionId(String sessionId);
+	Optional<Person> findBySessionId(String sessionId);
 	
 	@Modifying
 	@Query("update Person set session_id  = :sessionId,is_online= :isOnline where id = :id")

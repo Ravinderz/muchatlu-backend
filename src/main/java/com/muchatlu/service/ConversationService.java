@@ -3,15 +3,11 @@ package com.muchatlu.service;
 import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.model.*;
 import com.muchatlu.repository.ConversationRepository;
-import com.muchatlu.repository.FriendRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ConversationService {
@@ -20,11 +16,11 @@ public class ConversationService {
 	ConversationRepository repo;
 
 	@Autowired
-	UserService userService;
+	PersonService personService;
 
 	public List<Conversation> saveConversation(FriendRequestModel request){
-		String fromAvatar = userService.getUserAvatar(request.getRequestFromUserId());
-		String toAvatar = userService.getUserAvatar(request.getRequestToUserId());
+		String fromAvatar = personService.getUserAvatar(request.getRequestFromUserId());
+		String toAvatar = personService.getUserAvatar(request.getRequestToUserId());
 
 		Conversation fromConvo = new Conversation();
 		fromConvo.setUserIdFrom(request.getRequestFromUser().getId());

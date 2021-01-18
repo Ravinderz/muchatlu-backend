@@ -13,9 +13,9 @@ public class FriendRequestModel {
 	private Long requestFromUserId;
 	private Long requestToUserId;
 	private String status;
-	private User requestFromUser;
+	private Person requestFromUser;
 	private RequestUserTo requestToUser;
-	private User RequestSendToUserObject;
+	private Person RequestSendToUserObject;
 	
 	
 }

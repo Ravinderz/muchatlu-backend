@@ -20,7 +20,7 @@ public class FriendRequestService {
 	FriendRequestRepository repo;
 	
 	@Autowired
-	UserService userService;
+	PersonService personService;
 
 	@Autowired
 	ConversationService conversationService;
@@ -30,7 +30,7 @@ public class FriendRequestService {
 	private static final String PENDING = "PENDING";
 	
 	public FriendRequest saveFriendRequest(FriendRequest request) {
-		Optional<User> user = userService.getUserByUsername(request.getRequestToEmailId());
+		Optional<Person> user = personService.getUserByUsername(request.getRequestToEmailId());
 		Long userId = null;
 		if(user.isPresent())
 			userId = user.get().getId();
@@ -49,13 +49,13 @@ public class FriendRequestService {
 		model.setStatus(request.getStatus());
 		
 		if(ACCEPTED.equalsIgnoreCase(request.getStatus())) {
-			User fromUser = userService.getUserById(request.getRequestFromUserId());
+			Person fromUser = personService.getUserById(request.getRequestFromUserId());
 			model.setRequestFromUser(fromUser);
-			User toUser = userService.getUserByUsername(request.getRequestToEmailId()).get();
+			Person toUser = personService.getUserByUsername(request.getRequestToEmailId()).get();
 			model.setRequestToUser(new RequestUserTo(toUser));
 			model.setRequestToUserId(toUser.getId());
 			fromUser.getFriends().add(toUser);
-			userService.saveAllUsers(Arrays.asList(fromUser));
+			personService.saveAllUsers(Arrays.asList(fromUser));
 			conversationService.saveConversation(model);
 
 		}

@@ -19,7 +19,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-import com.muchatlu.service.UserService;
+import com.muchatlu.service.PersonService;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -27,7 +27,7 @@ import com.muchatlu.service.UserService;
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
 	
 	@Autowired
-	UserService userService;
+    PersonService personService;
 	
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -65,7 +65,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
         }
         
         private void updateQuery(String sessionId,boolean isOnline,Long userId) {
-        	userService.updateSessionIdByUserId(sessionId,isOnline,userId);
+        	personService.updateSessionIdByUserId(sessionId,isOnline,userId);
         }
         
     }

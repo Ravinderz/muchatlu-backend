@@ -22,7 +22,7 @@ public class MyUserDetails implements UserDetails{
 		this.username = username;
 	}
 	
-	public MyUserDetails(User user) {
+	public MyUserDetails(Person user) {
 		this.id = user.getId();
 		this.username = user.getUsername();
 		this.password = user.getPassword();
