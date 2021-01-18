@@ -22,10 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	Optional<User> findBySessionId(String sessionId);
 	
 	@Modifying
-	@Query("update User set session_id  = :sessionId,is_online= :isOnline where id = :id")
+	@Query("update Person set session_id  = :sessionId,is_online= :isOnline where id = :id")
 	int updateSessionIdForAUser(@Param("sessionId") String sessionId,@Param("isOnline") boolean isOnline, @Param("id") Long id);
 
-	@Query("select avatar from User where id = :id")
+	@Query("select avatar from Person where id = :id")
 	String getUserAvatar(@Param("id") Long id);
 		
 }
