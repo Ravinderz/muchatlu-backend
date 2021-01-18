@@ -24,7 +24,7 @@ import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com"}, allowedHeaders = "*")
 public class UserController {
 	
 	@Autowired
