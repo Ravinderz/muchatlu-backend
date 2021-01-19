@@ -23,5 +23,7 @@ public class FriendRequest {
 	private String requestToEmailId;
 	private String requestToUsername;
 	private Long requestToUserId;
+	private String avatarTo;
+	private String avatarFrom;
 	private String status;
 }
