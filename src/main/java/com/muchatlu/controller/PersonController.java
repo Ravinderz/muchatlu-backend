@@ -10,12 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.PersonService;
@@ -74,7 +69,6 @@ public class PersonController {
 	@PostMapping("/sendFriendRequest")
 	public FriendRequest sendFriendRequest(@RequestBody FriendRequest request) {
 		request = friendRequestService.saveFriendRequest(request);
-		System.out.println(request);
 		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",request);
 		return request;
 	}
@@ -110,6 +104,11 @@ public class PersonController {
 	@GetMapping("/getUserDetails/{value}")
 	public Person getUserDetails(@PathVariable("value") String value){
 		return personService.getUserDetails(value);
+	}
+
+	@PutMapping("/updateUserDetails")
+	public Person updateUserDetails(@RequestBody Person person){
+		return personService.updateUserDetails(person);
 	}
 
 //	@GetMapping("/getUserConversations/{id}")

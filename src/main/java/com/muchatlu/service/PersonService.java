@@ -98,4 +98,9 @@ public class PersonService {
 		return person;
 
 	}
+
+	public Person updateUserDetails(Person person){
+		personRepo.updateStatus(person.getStatus(), person.getId());
+		return person;
+	}
 }
