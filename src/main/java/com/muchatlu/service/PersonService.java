@@ -45,6 +45,16 @@ public class PersonService {
 		}
 
 	}
+
+	public Person getUserByUserId(Long id) {
+		Optional<Person> userModel =  personRepo.findById(id);
+		if(userModel.isPresent()) {
+			return userModel.get();
+		}else{
+			throw new UserNotFoundException("User not found");
+		}
+
+	}
 	
 	@Transactional
 	public int updateSessionIdByUserId(String sessionId,boolean isOnline,Long userId) {

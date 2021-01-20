@@ -26,4 +26,12 @@ public class MyUserDetailsService implements UserDetailsService{
 		return user.map(MyUserDetails::new).get();
 	}
 
+	public MyUserDetails loadUserByEmail(String username) throws UsernameNotFoundException {
+		Optional<Person> user = personService.getUserByUsername(username);
+
+		user.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+		return user.map(MyUserDetails::new).get();
+	}
+
 }
