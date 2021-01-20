@@ -25,6 +25,10 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 	@Query("update Person set session_id  = :sessionId,is_online= :isOnline where id = :id")
 	int updateSessionIdForAUser(@Param("sessionId") String sessionId,@Param("isOnline") boolean isOnline, @Param("id") Long id);
 
+	@Modifying
+	@Query("update Person set status  = :status where id = :id")
+	int updateStatus(@Param("status") String status, @Param("id") Long id);
+
 	@Query("select avatar from Person where id = :id")
 	String getUserAvatar(@Param("id") Long id);
 		

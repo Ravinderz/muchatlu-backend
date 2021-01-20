@@ -1,5 +1,6 @@
 package com.muchatlu.controller;
 
+import com.muchatlu.model.Typing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
@@ -28,6 +29,11 @@ public class MessageController {
 		message.setTimestamp(LocalDateTime.now());
 		messageService.saveMessage(message);
 		simpMessageTemplate.convertAndSend("/topic/"+userId+"/messages",message);
+	}
+
+	@MessageMapping("/chat.typing.{userId}")
+	public void typing(@DestinationVariable("userId") Long userId, @Payload Typing typing, @Header(name = "simpSessionId") String sessionId) {
+		simpMessageTemplate.convertAndSend("/topic/"+userId+"/messages.typing",typing);
 	}
 	
 }
