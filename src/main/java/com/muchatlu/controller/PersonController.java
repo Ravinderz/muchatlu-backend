@@ -1,11 +1,14 @@
 package com.muchatlu.controller;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import com.muchatlu.dto.ConversationDto;
+import com.muchatlu.exception.NotAuthorizedException;
 import com.muchatlu.model.*;
+import com.muchatlu.service.AuthorizationService;
 import com.muchatlu.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.PersonService;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpSession;
 
@@ -38,6 +42,9 @@ public class PersonController {
 	
 	@Autowired
 	FriendRequestService friendRequestService;
+
+	@Autowired
+	AuthorizationService authorizationService;
 	
 	@Autowired
 	private SimpMessagingTemplate simpMessageTemplate;
@@ -69,52 +76,90 @@ public class PersonController {
 	@GetMapping("/getAllFriends/{userId}")
 	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
 		System.out.println("principal"+((MyUserDetails)userDetails).getEmail());
-		return personService.getUserById(userId);
+		if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
+			return personService.getUserById(userId);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
+
 	}
 	
 	@PostMapping("/sendFriendRequest")
-	public FriendRequest sendFriendRequest(@RequestBody FriendRequest request) {
-		request = friendRequestService.saveFriendRequest(request);
-		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",request);
-		return request;
+	public FriendRequest sendFriendRequest(@RequestBody FriendRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+		if(authorizationService.validateRequest("sendFriendRequest","self",request,(MyUserDetails)userDetails)){
+			request = friendRequestService.saveFriendRequest(request);
+			simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",request);
+			return request;
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
+
 	}
 	
 	@PostMapping("/updateFriendRequest")
-	public FriendRequestModel updateFriendRequest(@RequestBody FriendRequest request) {
-		FriendRequestModel model = friendRequestService.updateFriendRequest(request);
-		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",model);
-		simpMessageTemplate.convertAndSend("/topic/"+request.getRequestFromUserId()+".friendRequest",model);
-		return model;
+	public FriendRequestModel updateFriendRequest(@RequestBody FriendRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+		if(authorizationService.validateRequest("updateFriendRequest","self",request,(MyUserDetails)userDetails)) {
+			FriendRequestModel model = friendRequestService.updateFriendRequest(request);
+			simpMessageTemplate.convertAndSend("/topic/" + request.getRequestToUserId() + ".friendRequest", model);
+			simpMessageTemplate.convertAndSend("/topic/" + request.getRequestFromUserId() + ".friendRequest", model);
+			return model;
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@GetMapping("/getFriendRequests/{userId}")
-	public List<FriendRequest> getFriendRequests(@PathVariable Long userId){
-		return friendRequestService.getFriendRequestsByUserId(userId);
+	public List<FriendRequest> getFriendRequests(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("getFriendRequests","self",userId,(MyUserDetails)userDetails)) {
+			return friendRequestService.getFriendRequestsByUserId(userId);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@GetMapping("/getConversationId/{fromId}/{toId}")
-	public Long getConversationId(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId){
-		return conversationService.getConversationId(fromId,toId);
+	public Long getConversationId(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId, @AuthenticationPrincipal UserDetails userDetails) {
+		if(authorizationService.validateRequest("getConversationId","self", Arrays.asList(fromId,toId),(MyUserDetails)userDetails)){
+		return conversationService.getConversationId(fromId, toId);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@GetMapping("/getConversation/{fromId}/{toId}")
-	public Conversation getConversation(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId){
-		return conversationService.getConversation(fromId,toId);
+	public Conversation getConversation(@PathVariable("fromId") Long fromId,@PathVariable("toId") Long toId, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("getConversation","self", Arrays.asList(fromId,toId),(MyUserDetails)userDetails)) {
+			return conversationService.getConversation(fromId, toId);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@GetMapping("/getUserConversations/{id}")
-	public List<ConversationDto> getUserConversations(@PathVariable("id") Long id){
-		return conversationService.getConversationsForUser(id);
+	public List<ConversationDto> getUserConversations(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("getUserConversations","self",id,(MyUserDetails)userDetails)) {
+			return conversationService.getConversationsForUser(id);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@GetMapping("/getUserDetails/{value}")
-	public Person getUserDetails(@PathVariable("value") String value){
-		return personService.getUserDetails(value);
+	public Person getUserDetails(@PathVariable("value") String value, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("getUserDetails","self",value,(MyUserDetails)userDetails)) {
+			return personService.getUserDetails(value);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 	@PutMapping("/updateUserDetails")
-	public Person updateUserDetails(@RequestBody Person person){
-		return personService.updateUserDetails(person);
+	public Person updateUserDetails(@RequestBody Person person, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("updateUserDetails","self",person,(MyUserDetails)userDetails)) {
+			return personService.updateUserDetails(person);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 	}
 
 //	@GetMapping("/getUserConversations/{id}")

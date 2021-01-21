@@ -34,4 +34,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse err = new ErrorResponse(ex.getMessage(),request.getDescription(false), LocalDateTime.now());
         return new ResponseEntity<>(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public final ResponseEntity<Object> handleNotAuthorizedException(Exception ex, WebRequest request){
+        ex.printStackTrace();
+        ErrorResponse err = new ErrorResponse(ex.getMessage(),request.getDescription(false), LocalDateTime.now());
+        return new ResponseEntity<>(err, HttpStatus.UNAUTHORIZED);
+    }
 }
