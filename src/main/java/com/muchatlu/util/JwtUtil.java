@@ -9,13 +9,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 @Component
-public class JwtUtil {
+public class JwtUtil implements Serializable {
+
+    private static final long serialVersionUID = 234234L;
+
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${jwt.secret}")

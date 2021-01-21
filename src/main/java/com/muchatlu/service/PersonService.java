@@ -46,13 +46,13 @@ public class PersonService {
 
 	}
 
-	public Person getUserByUserId(Long id) {
-		Optional<Person> userModel =  personRepo.findById(id);
-		if(userModel.isPresent()) {
-			return userModel.get();
-		}else{
-			throw new UserNotFoundException("User not found");
-		}
+	public Optional<Person> getUserByUserId(Long id) {
+		return personRepo.findById(id);
+//		if(userModel.isPresent()) {
+//			return userModel.get();
+//		}else{
+//			throw new UserNotFoundException("User not found");
+//		}
 
 	}
 	

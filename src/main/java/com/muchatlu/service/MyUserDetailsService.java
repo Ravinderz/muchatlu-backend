@@ -19,7 +19,12 @@ public class MyUserDetailsService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Person> user = personService.getUserByUsername(username);
+		Optional<Person> user = Optional.empty();
+		if(username.contains("@")){
+			user = personService.getUserByUsername(username);
+		}else{
+			user = personService.getUserByUserId(Long.parseLong(username));
+		}
 		
 		user.orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 		

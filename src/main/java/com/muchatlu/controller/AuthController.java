@@ -1,15 +1,24 @@
 package com.muchatlu.controller;
 
+import com.muchatlu.model.AuthRequest;
+import com.muchatlu.model.AuthResponse;
 import com.muchatlu.model.MyUserDetails;
 import com.muchatlu.model.Person;
+import com.muchatlu.service.MyUserDetailsService;
 import com.muchatlu.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 @RestController
 public class AuthController {
@@ -20,18 +29,26 @@ public class AuthController {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    UserDetailsService userDetailsService;
+
     @PostMapping("/authenticate")
-    public String getToken(@RequestBody Person person) throws Exception {
+    public AuthResponse getToken(@RequestBody AuthRequest request) throws Exception {
+
         Authentication principle = null;
         try {
-            principle = authManager.authenticate(new UsernamePasswordAuthenticationToken(person.getEmail(),person.getPassword()));
+            authManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
+
         }catch(Exception e) {
             throw new Exception("Incorrect username and password");
         }
 
-        MyUserDetails details = (MyUserDetails) principle.getPrincipal();
+        UserDetails details = userDetailsService.loadUserByUsername(request.getEmail());
+        MyUserDetails user = (MyUserDetails) details;
 
-        final String token = jwtUtil.generateToken(details);
-        return token;
+        AuthResponse response = new AuthResponse(user.getId(), jwtUtil.generateToken(user));
+
+        return response;
+
     }
 }

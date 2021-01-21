@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -32,7 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService);
+		auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
 	}
 
 	@Override
@@ -43,25 +45,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors()
-			.and().csrf().disable().
+		http.cors().and()
+			.csrf().disable().
 			authorizeRequests()
-			//.antMatchers("/login","/register","/chat/**","/h2-console/**")
-			.antMatchers("/**")
+			.antMatchers("/authenticate","/chat/**","/h2-console/**","ws://**")
 			.permitAll()
 			.anyRequest()
 			.authenticated()
 				.and()
-			.sessionManagement()
-			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
+				.httpBasic().disable()
+				.formLogin().disable()
+//			.sessionManagement()
+//			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//				.and()
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-			http.headers().frameOptions().disable();
+//			http.headers().frameOptions().disable();
 	}
 
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
 		return NoOpPasswordEncoder.getInstance();
+//		PasswordEncoder passwordEncoder =
+//				PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//		return passwordEncoder;
 	}
 
 	@Bean
@@ -72,7 +78,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS","HEAD","DELETE"));
 		configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin",
-				"Cache-Control", "Content-Type"));
+				"Cache-Control", "Content-Type","Authorization"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

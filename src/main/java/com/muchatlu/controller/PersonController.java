@@ -1,6 +1,8 @@
 package com.muchatlu.controller;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.model.*;
@@ -10,10 +12,16 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.muchatlu.service.FriendRequestService;
 import com.muchatlu.service.PersonService;
+
+import javax.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -41,19 +49,16 @@ public class PersonController {
 	}
 	
 	@PostMapping("/login")
-	public MyUserDetails login(@RequestBody Person user) throws Exception{
-		Authentication principle = null;
-		try {
-			principle = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
-		}catch(Exception e) {
-			throw new Exception("Incorrect username and password");
+	public Person login(@RequestBody Person user) throws Exception{
+
+		Optional<Person> opt = personService.getUserByUsername(user.getEmail());
+		Person person = null;
+		if(opt.isPresent()){
+			person = opt.get();
+			person.setSessionId(null);
+			person.setPassword(null);
 		}
-		
-		MyUserDetails details = (MyUserDetails) principle.getPrincipal();
-		details.setIsOnline(true);
-		details.setSessionId(null);
-		details.setPassword(null);
-		return details;
+		return person;
 	}
 	
 	@GetMapping("/getAllUsers/{userId}")
@@ -62,7 +67,8 @@ public class PersonController {
 	}
 	
 	@GetMapping("/getAllFriends/{userId}")
-	public Person getFriendsOfUser(@PathVariable Long userId){
+	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
+		System.out.println("principal"+((MyUserDetails)userDetails).getEmail());
 		return personService.getUserById(userId);
 	}
 	
