@@ -29,9 +29,9 @@ public class PresenceEventListener {
 	@EventListener
 	private void handleSessionConnected(SessionConnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
-		String sessionId = headers.getSessionId();
-		Person user = userService.getUserBySessionId(sessionId);
-		UserStatus status = new UserStatus(user.getId(),user.getUsername(),user.getSessionId() != null ? true : false);
+		Long id = Long.parseLong(headers.getNativeHeader("userId").get(0));
+		Person user = userService.getUserByUserId(id).get();
+		UserStatus status = new UserStatus(user.getId(),user.getUsername(),true);
 		messagingTemplate.convertAndSend(loginDestination, status);
 		
 	}
@@ -43,6 +43,8 @@ public class PresenceEventListener {
 	@EventListener
 	private void handleSessionDisconnect(SessionDisconnectEvent event) {
 		SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.wrap(event.getMessage());
+////		Long id = Long.parseLong(headers.getNativeHeader("userId").get(0));
+//		Person user = userService.getUserByUserId(1l).get();
 		String sessionId = headers.getSessionId();
 		Person user = userService.getUserBySessionId(sessionId);
 		userService.updateSessionIdByUserId(null, false, user.getId());
