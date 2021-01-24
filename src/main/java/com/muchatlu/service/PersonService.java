@@ -1,10 +1,6 @@
 package com.muchatlu.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -13,6 +9,7 @@ import com.muchatlu.exception.UserExistsException;
 import com.muchatlu.exception.UserNotFoundException;
 import com.muchatlu.model.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.muchatlu.model.Person;
@@ -23,12 +20,17 @@ public class PersonService {
 
 	@Autowired
 	PersonRepository personRepo;
+
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public Person register(Person user) throws Exception {
-		Optional<Person> newUser = personRepo.findByEmail(user.getEmail());
+		Optional<Person> newUser = personRepo.findByEmail(user.getEmail().toLowerCase());
 		if(newUser.isPresent()){
 			throw new UserExistsException("User already exists");
 		}
+		user.setEmail(user.getEmail().toLowerCase());
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		personRepo.save(user);
 		return user;
 	}
