@@ -24,7 +24,7 @@ public class ConversationDto {
 	private String lastMessageFrom;
 	private Boolean isUserFromOnline;
 	private Boolean isUserToOnline;
-	private Timestamp lastMessageTimestamp;
+	private String lastMessageTimestamp;
 
 	public ConversationDto(Long id, Long userIdFrom, String usernameFrom, String avatarFrom, Long userIdTo, String usernameTo, String avatarTo) {
 		this.id = id;
