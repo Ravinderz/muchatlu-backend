@@ -1,26 +1,22 @@
 package com.muchatlu.filter;
 
+import com.muchatlu.exception.InvalidSessionException;
+import com.muchatlu.model.AuthenticateToken;
 import com.muchatlu.model.MyUserDetails;
+import com.muchatlu.service.AuthenticationTokenService;
 import com.muchatlu.service.MyUserDetailsService;
-import com.muchatlu.service.PersonService;
 import com.muchatlu.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,6 +31,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private  MyUserDetailsService userDetailsService;
 
+    @Autowired
+    private AuthenticationTokenService authService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -45,9 +44,12 @@ public class JwtFilter extends OncePerRequestFilter {
         if(null != authorization && authorization.startsWith("Bearer ")){
             token = authorization.substring(7);
             username = jwtUtil.getUsernameFromToken(token);
-        }
+            AuthenticateToken authToken = authService.getAuthToken(token);
+            if(authToken != null && !authToken.getIsActive()){
+                throw new InvalidSessionException("Session Expired");
+            }
 
-        System.out.println("authentication object >>>>>>> "+SecurityContextHolder.getContext().getAuthentication());
+        }
 
         if(null != username && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -59,13 +61,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 securityContext.setAuthentication(authToken);
                 HttpSession session = request.getSession(true);
                 session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
             }
-
         }
-
         filterChain.doFilter(request,response);
-
     }
 
 //    @Override

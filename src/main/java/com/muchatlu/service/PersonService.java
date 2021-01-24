@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import com.muchatlu.exception.UserExistsException;
 import com.muchatlu.exception.UserNotFoundException;
+import com.muchatlu.model.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +75,11 @@ public class PersonService {
 	public List<Person> saveAllUsers(List<Person> users){
 		return personRepo.saveAll(users);
 	}
+
+	public Person saveUser(Person user){
+		return personRepo.save(user);
+	}
+
 	
 	public Person getUserById(Long id) {
 		Optional<Person> userModel = personRepo.findById(id);
@@ -81,9 +87,6 @@ public class PersonService {
 		Set<Person> set = new HashSet<>();
 		if(userModel.isPresent()) {
 			user = userModel.get();
-			set.addAll(user.getFriends().stream().filter(p -> p instanceof Person).collect(Collectors.toList()));
-			set.addAll(user.getFriendsTo().stream().filter(p -> p instanceof Person).collect(Collectors.toList()));
-			user.getFriends().addAll(set);
 			return user;
 		}else
 			return null;
@@ -109,8 +112,18 @@ public class PersonService {
 
 	}
 
+	@Transactional
 	public Person updateUserDetails(Person person){
 		personRepo.updateStatus(person.getStatus(), person.getId());
 		return person;
+	}
+
+	public UserStatus getUserOnlinePresence(Long id){
+		UserStatus status = new UserStatus(id,"",personRepo.getUserOnlinePresence(id));
+		return status;
+	}
+
+	public int checkIfUserIsFriend(Long fromId,Long toId){
+		return personRepo.getCountFromUserFriend(fromId,toId);
 	}
 }

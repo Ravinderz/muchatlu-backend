@@ -55,7 +55,8 @@ public class FriendRequestService {
 			model.setRequestToUser(new RequestUserTo(toUser));
 			model.setRequestToUserId(toUser.getId());
 			fromUser.getFriends().add(toUser);
-			personService.saveAllUsers(Arrays.asList(fromUser));
+			toUser.getFriends().add(fromUser);
+			personService.saveAllUsers(Arrays.asList(fromUser,toUser));
 			conversationService.saveConversation(model);
 
 		}

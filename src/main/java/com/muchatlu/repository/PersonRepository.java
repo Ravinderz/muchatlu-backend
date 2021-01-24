@@ -31,5 +31,16 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 
 	@Query("select avatar from Person where id = :id")
 	String getUserAvatar(@Param("id") Long id);
-		
+
+	@Query("select isOnline from Person where id = :id")
+	Boolean getUserOnlinePresence(@Param("id") Long id);
+
+	@Query(value = "SELECT count(*) FROM user_friends " +
+			"WHERE (" +
+			"    CASE WHEN (SELECT COUNT(*) FROM user_friends WHERE friend_of_id = :fromId and friend_to_id = :toId LIMIT 1) > 0 THEN" +
+			"            (friend_of_id = :fromId and friend_to_id = :toId)" +
+			"         WHEN (SELECT COUNT(*) FROM user_friends WHERE friend_of_id = :toId and friend_to_id = :fromId LIMIT 1) > 0 THEN" +
+			"            (friend_of_id = :toId and friend_to_id = :fromId)" +
+			"         ELSE 1=2 END)",nativeQuery = true)
+	int getCountFromUserFriend(@Param("fromId") Long fromId,@Param("toId") Long toId);
 }

@@ -26,7 +26,6 @@ public class MessageController {
 
 	@MessageMapping("/chat.{userId}")
 	public void sendMessage(@DestinationVariable("userId") Long userId,@Payload Message message,@Header(name = "simpSessionId") String sessionId) {
-		message.setTimestamp(LocalDateTime.now());
 		messageService.saveMessage(message);
 		simpMessageTemplate.convertAndSend("/topic/"+userId+"/messages",message);
 	}
