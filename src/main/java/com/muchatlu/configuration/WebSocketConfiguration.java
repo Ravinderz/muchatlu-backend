@@ -45,7 +45,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/chat").setHandshakeHandler(new MyHandshakeHandler())
-		.setAllowedOrigins("http://192.168.0.103:4200","http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com","https://www.muchatlu.in","http://www.muchatlu.in")
+		.setAllowedOrigins("http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com","https://www.muchatlu.in","http://www.muchatlu.in")
 		.withSockJS();
 	}
 

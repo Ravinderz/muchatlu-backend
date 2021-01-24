@@ -2,6 +2,7 @@ package com.muchatlu.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.muchatlu.util.PersonSerializer;
@@ -18,7 +19,9 @@ import java.util.*;
 @Entity
 //@JsonIdentityInfo(
 //		generator = ObjectIdGenerators.PropertyGenerator.class,property = "id",scope = Person.class)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonSerialize(using = PersonSerializer.class)
+
 @Table(name = "person")
 public class Person {
 
@@ -41,6 +44,7 @@ public class Person {
 	private Set<Person> friends  = new HashSet<>();
 	
 	@ManyToMany(mappedBy = "friends")
+	@JsonIgnore
 	private Set<Person> friendsTo  = new HashSet<>();
 
 	@Override

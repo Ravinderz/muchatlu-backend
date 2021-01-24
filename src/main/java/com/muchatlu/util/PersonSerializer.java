@@ -28,8 +28,19 @@ public class PersonSerializer extends StdSerializer<Person> {
         jgen.writeStringField("username", value.username);
         jgen.writeStringField("email", value.email);
         jgen.writeStringField("avatar", value.avatar);
-        jgen.writeBooleanField("isOnline", value.isOnline);
-        jgen.writeStringField("status", value.status);
+
+        if(value.getIsOnline() != null){
+            jgen.writeBooleanField("isOnline", value.isOnline);
+        }else{
+            jgen.writeNullField("isOnline");
+        }
+
+        if(value.getStatus() != null){
+            jgen.writeStringField("status", value.status);
+        }else{
+            jgen.writeNullField("status");
+        }
+
         jgen.writeArrayFieldStart("friends");
         for(Person user : value.getFriends()) {
             jgen.writeStartObject();
