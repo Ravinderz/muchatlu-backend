@@ -1,8 +1,10 @@
 package com.muchatlu.service;
 
+import com.muchatlu.model.AuthenticateToken;
 import com.muchatlu.model.FriendRequest;
 import com.muchatlu.model.MyUserDetails;
 import com.muchatlu.model.Person;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,4 +55,6 @@ public class AuthorizationService {
         }
         return false;
     }
+
+
 }

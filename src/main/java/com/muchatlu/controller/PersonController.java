@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.exception.NotAuthorizedException;
+import com.muchatlu.exception.UserIsAlreadyFriendException;
 import com.muchatlu.model.*;
-import com.muchatlu.service.AuthorizationService;
-import com.muchatlu.service.ConversationService;
+import com.muchatlu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,8 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import com.muchatlu.service.FriendRequestService;
-import com.muchatlu.service.PersonService;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpSession;
@@ -45,6 +43,9 @@ public class PersonController {
 
 	@Autowired
 	AuthorizationService authorizationService;
+
+	@Autowired
+	AuthenticationTokenService authTokenService;
 	
 	@Autowired
 	private SimpMessagingTemplate simpMessageTemplate;
@@ -67,6 +68,17 @@ public class PersonController {
 		}
 		return person;
 	}
+
+	@PostMapping("/logoutUser")
+	public UserStatus logoutUser(@RequestBody Person user, @RequestHeader("Authorization") String token) throws Exception{
+		token = token.replace("Bearer ","");
+		AuthenticateToken authToken = authTokenService.getAuthToken(token);
+				authToken.setIsActive(false);
+		authTokenService.saveToken(authToken);
+		personService.updateSessionIdByUserId(null,false,user.getId());
+		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);
+		return status;
+	}
 	
 	@GetMapping("/getAllUsers/{userId}")
 	public List<Person> getAllUsers(@PathVariable Long userId){
@@ -76,17 +88,21 @@ public class PersonController {
 	@GetMapping("/getAllFriends/{userId}")
 	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
 		System.out.println("principal"+((MyUserDetails)userDetails).getEmail());
-		if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
+		//if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
 			return personService.getUserById(userId);
-		}else{
-			throw new NotAuthorizedException("Not Authorized");
-		}
+		//}else{
+		//	throw new NotAuthorizedException("Not Authorized");
+		//}
 
 	}
 	
 	@PostMapping("/sendFriendRequest")
 	public FriendRequest sendFriendRequest(@RequestBody FriendRequest request, @AuthenticationPrincipal UserDetails userDetails) {
 		if(authorizationService.validateRequest("sendFriendRequest","self",request,(MyUserDetails)userDetails)){
+			int i = personService.checkIfUserIsFriend(request.getRequestFromUserId(), request.getRequestToUserId());
+			if(i > 0){
+				throw new UserIsAlreadyFriendException("User is already Friend");
+			}
 			request = friendRequestService.saveFriendRequest(request);
 			simpMessageTemplate.convertAndSend("/topic/"+request.getRequestToUserId()+".friendRequest",request);
 			return request;
@@ -146,11 +162,16 @@ public class PersonController {
 
 	@GetMapping("/getUserDetails/{value}")
 	public Person getUserDetails(@PathVariable("value") String value, @AuthenticationPrincipal UserDetails userDetails){
-		if(authorizationService.validateRequest("getUserDetails","self",value,(MyUserDetails)userDetails)) {
+//		if(authorizationService.validateRequest("getUserDetails","self",value,(MyUserDetails)userDetails)) {
 			return personService.getUserDetails(value);
-		}else{
-			throw new NotAuthorizedException("Not Authorized");
-		}
+//		}else{
+//			throw new NotAuthorizedException("Not Authorized");
+//		}
+	}
+
+	@GetMapping("/getUserOnlinePresence/{userId}")
+	public UserStatus getUserOnlinePresence(@PathVariable("userId") Long id){
+		return personService.getUserOnlinePresence(id);
 	}
 
 	@PutMapping("/updateUserDetails")

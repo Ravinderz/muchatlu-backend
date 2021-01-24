@@ -1,9 +1,7 @@
 package com.muchatlu.controller;
 
-import com.muchatlu.model.AuthRequest;
-import com.muchatlu.model.AuthResponse;
-import com.muchatlu.model.MyUserDetails;
-import com.muchatlu.model.Person;
+import com.muchatlu.model.*;
+import com.muchatlu.service.AuthenticationTokenService;
 import com.muchatlu.service.MyUserDetailsService;
 import com.muchatlu.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,9 @@ public class AuthController {
     @Autowired
     UserDetailsService userDetailsService;
 
+    @Autowired
+    AuthenticationTokenService authTokenService;
+
     @PostMapping("/authenticate")
     public AuthResponse getToken(@RequestBody AuthRequest request) throws Exception {
 
@@ -47,9 +48,11 @@ public class AuthController {
 
         UserDetails details = userDetailsService.loadUserByUsername(request.getEmail());
         MyUserDetails user = (MyUserDetails) details;
-
-        AuthResponse response = new AuthResponse(user.getId(), jwtUtil.generateToken(user));
-
+        String token = jwtUtil.generateToken(user);
+        AuthenticateToken authToken = new AuthenticateToken(token,true);
+        System.out.println(authToken);
+        authTokenService.saveToken(authToken);
+        AuthResponse response = new AuthResponse(user.getId(),token);
         return response;
 
     }

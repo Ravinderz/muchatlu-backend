@@ -3,44 +3,56 @@ package com.muchatlu.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.muchatlu.util.PersonSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@JsonIdentityInfo(
-		generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
+//@JsonIdentityInfo(
+//		generator = ObjectIdGenerators.PropertyGenerator.class,property = "id",scope = Person.class)
+@JsonSerialize(using = PersonSerializer.class)
 @Table(name = "person")
 public class Person {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	private String sessionId;
-	private String username;
-	private String password;
-	private String email;
-	private String avatar;
-	private Boolean isOnline;
-	private String status;
+	public Long id;
+	public String sessionId;
+	public String username;
+	public String password;
+	public String email;
+	public String avatar;
+	public Boolean isOnline;
+	public String status;
 	
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="UserFriends",
 	 joinColumns=@JoinColumn(name="FriendOfId"),
 	 inverseJoinColumns=@JoinColumn(name="friendToId")
 	)
-	private List<Person> friends  = new ArrayList<>();
+	private Set<Person> friends  = new HashSet<>();
 	
 	@ManyToMany(mappedBy = "friends")
-	@JsonIgnore
-	private List<Person> friendsTo  = new ArrayList<>();
-	
+	private Set<Person> friendsTo  = new HashSet<>();
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Person person = (Person) o;
+		return id.equals(person.id) && username.equals(person.username) && email.equals(person.email);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, username, email);
+	}
 }
