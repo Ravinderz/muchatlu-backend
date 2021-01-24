@@ -5,25 +5,18 @@ import com.muchatlu.model.AuthenticateToken;
 import com.muchatlu.model.MyUserDetails;
 import com.muchatlu.service.AuthenticationTokenService;
 import com.muchatlu.service.MyUserDetailsService;
-import com.muchatlu.service.PersonService;
 import com.muchatlu.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -58,8 +51,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         }
 
-        System.out.println("authentication object >>>>>>> "+SecurityContextHolder.getContext().getAuthentication());
-
         if(null != username && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             MyUserDetails details = (MyUserDetails) userDetails;
@@ -70,13 +61,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 securityContext.setAuthentication(authToken);
                 HttpSession session = request.getSession(true);
                 session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
             }
-
         }
-
         filterChain.doFilter(request,response);
-
     }
 
 //    @Override

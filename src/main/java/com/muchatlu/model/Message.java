@@ -23,7 +23,7 @@ public class Message {
 	private String avatarTo;
 	private String usernameTo;
 	private Long userIdTo;
-	private LocalDateTime timestamp;
+	private String timestamp;
 	private String message;
 
 	@Column(name="CONVERSATION_ID")
