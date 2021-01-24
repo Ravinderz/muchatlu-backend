@@ -117,7 +117,7 @@ public class ConversationService {
 							break;
 						}
 						case 9:{
-							dto.setLastMessageTimestamp((Timestamp) o[i]);
+							dto.setLastMessageTimestamp((String) o[i]);
 							break;
 						}
 					}
