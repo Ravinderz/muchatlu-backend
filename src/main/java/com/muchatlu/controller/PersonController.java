@@ -1,10 +1,5 @@
 package com.muchatlu.controller;
 
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import com.muchatlu.dto.ConversationDto;
 import com.muchatlu.exception.NotAuthorizedException;
 import com.muchatlu.exception.UserIsAlreadyFriendException;
@@ -13,20 +8,15 @@ import com.muchatlu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.client.HttpClientErrorException;
-
-import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PersonController {
 	
 	@Autowired
@@ -80,19 +70,19 @@ public class PersonController {
 		return status;
 	}
 	
-	@GetMapping("/getAllUsers/{userId}")
-	public List<Person> getAllUsers(@PathVariable Long userId){
-		return personService.getAllUsers(userId);
+	@GetMapping("/getAllUsers")
+	public List<Person> getAllUsers(){
+		return personService.getAllUsers();
 	}
 	
 	@GetMapping("/getAllFriends/{userId}")
 	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
 		System.out.println("principal"+((MyUserDetails)userDetails).getEmail());
-		//if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
+		if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
 			return personService.getUserById(userId);
-		//}else{
-		//	throw new NotAuthorizedException("Not Authorized");
-		//}
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
 
 	}
 	

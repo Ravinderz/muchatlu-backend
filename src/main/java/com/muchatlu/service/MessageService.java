@@ -17,7 +17,7 @@ public class MessageService {
 	MessageRepository messageRepo;
 	
 	public void saveMessage(Message message) {
-
+		System.out.println(message);
 		ZonedDateTime zdtInstanceAtUTC = ZonedDateTime.parse(message.getTimestamp(), DateTimeFormatter.ISO_DATE_TIME);
 		message.setTimestamp(zdtInstanceAtUTC.toString());
 		System.out.println(zdtInstanceAtUTC.toString());
