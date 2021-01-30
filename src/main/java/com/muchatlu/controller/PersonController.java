@@ -164,6 +164,11 @@ public class PersonController {
 		return personService.getUserOnlinePresence(id);
 	}
 
+	@GetMapping("/filterFriends/{id}/{text}")
+	public List<Person> getFilteredFriends(@PathVariable("id") Long id,@PathVariable("text") String text){
+		return personService.getFilterFriends(id,text);
+	}
+
 	@PutMapping("/updateUserDetails")
 	public Person updateUserDetails(@RequestBody Person person, @AuthenticationPrincipal UserDetails userDetails){
 		if(authorizationService.validateRequest("updateUserDetails","self",person,(MyUserDetails)userDetails)) {

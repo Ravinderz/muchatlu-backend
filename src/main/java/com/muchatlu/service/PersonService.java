@@ -1,5 +1,6 @@
 package com.muchatlu.service;
 
+import com.muchatlu.exception.UserDoesntExistException;
 import com.muchatlu.exception.UserExistsException;
 import com.muchatlu.exception.UserNotFoundException;
 import com.muchatlu.model.Person;
@@ -22,7 +23,7 @@ public class PersonService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public Person register(Person user) {
-		Optional<Person> newUser = personRepo.findByEmail(user.getEmail().toLowerCase());
+		Optional<Person> newUser = personRepo.findByEmailContainingIgnoreCase(user.getEmail().toLowerCase());
 		if(newUser.isPresent()){
 			throw new UserExistsException("User already exists");
 		}
@@ -62,7 +63,7 @@ public class PersonService {
 	}
 	
 	public Optional<Person> getUserByUsername(String email) {
-		return personRepo.findByEmail(email);
+		return personRepo.findByEmailContainingIgnoreCase(email);
 	}
 	
 	public List<Person> getAllUsers(){
@@ -96,12 +97,14 @@ public class PersonService {
 		Person person = new Person();
 		Optional<Person> optionalPerson;
 		if(value.contains("@")){
-			optionalPerson = personRepo.findByEmail(value);
+			optionalPerson = personRepo.findByEmailContainingIgnoreCase(value);
 		}else{
 			optionalPerson = personRepo.findById(Long.parseLong(value));
 		}
 		if(optionalPerson != null && optionalPerson.isPresent()){
 			person = optionalPerson.get();
+		}else{
+			throw new UserDoesntExistException("User does not exist");
 		}
 
 		return person;
@@ -117,6 +120,11 @@ public class PersonService {
 	public UserStatus getUserOnlinePresence(Long id){
 		UserStatus status = new UserStatus(id,"",personRepo.getUserOnlinePresence(id));
 		return status;
+	}
+
+	public List<Person> getFilterFriends(Long id,String text){
+		text = "%"+text+"%";
+		return personRepo.getFilterFriends(id,text);
 	}
 
 	public int checkIfUserIsFriend(Long fromId,Long toId){
