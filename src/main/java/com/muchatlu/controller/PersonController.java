@@ -65,7 +65,7 @@ public class PersonController {
 		AuthenticateToken authToken = authTokenService.getAuthToken(token);
 				authToken.setIsActive(false);
 		authTokenService.saveToken(authToken);
-		personService.updateSessionIdByUserId(null,false,user.getId());
+		//personService.updateSessionIdByUserId(null,false,user.getId());
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);
 		return status;
 	}
@@ -162,6 +162,11 @@ public class PersonController {
 	@GetMapping("/getUserOnlinePresence/{userId}")
 	public UserStatus getUserOnlinePresence(@PathVariable("userId") Long id){
 		return personService.getUserOnlinePresence(id);
+	}
+
+	@GetMapping("/filterFriends/{id}/{text}")
+	public List<Person> getFilteredFriends(@PathVariable("id") Long id,@PathVariable("text") String text){
+		return personService.getFilterFriends(id,text);
 	}
 
 	@PutMapping("/updateUserDetails")

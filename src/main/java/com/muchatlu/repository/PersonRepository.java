@@ -1,5 +1,6 @@
 package com.muchatlu.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 	
 	Optional<Person> findById(Long id);
 	
-	Optional<Person> findByEmail(String email);
+	Optional<Person> findByEmailContainingIgnoreCase(String email);
 	
 	Optional<Person> findBySessionId(String sessionId);
 	
@@ -43,4 +44,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 			"            (friend_of_id = :toId and friend_to_id = :fromId)" +
 			"         ELSE 1=2 END)",nativeQuery = true)
 	int getCountFromUserFriend(@Param("fromId") Long fromId,@Param("toId") Long toId);
+
+	@Query(value = "select p.id,p.avatar,p.email,p.is_online,p.status,p.username,p.password,p.session_id from person p join user_friends f on p.id= f.friend_to_id where f.friend_of_id = :id and lower(p.username) like lower(:text)",nativeQuery = true)
+	List<Person> getFilterFriends(@Param("id") Long id, @Param("text") String text);
 }
