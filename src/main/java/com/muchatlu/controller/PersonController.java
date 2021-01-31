@@ -65,7 +65,7 @@ public class PersonController {
 		AuthenticateToken authToken = authTokenService.getAuthToken(token);
 				authToken.setIsActive(false);
 		authTokenService.saveToken(authToken);
-		personService.updateSessionIdByUserId(null,false,user.getId());
+		//personService.updateSessionIdByUserId(null,false,user.getId());
 		UserStatus status = new UserStatus(user.getId(),user.getUsername(),false);
 		return status;
 	}
