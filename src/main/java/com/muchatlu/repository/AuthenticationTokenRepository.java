@@ -15,4 +15,6 @@ public interface AuthenticationTokenRepository extends JpaRepository<Authenticat
 
     public AuthenticateToken findByToken(String token);
 
+    public AuthenticateToken findByTokenId(String id);
+
 }

@@ -5,6 +5,7 @@ import com.muchatlu.exception.NotAuthorizedException;
 import com.muchatlu.exception.UserIsAlreadyFriendException;
 import com.muchatlu.model.*;
 import com.muchatlu.service.*;
+import com.muchatlu.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,9 @@ public class PersonController {
 
 	@Autowired
 	AuthenticationTokenService authTokenService;
+
+	@Autowired
+	JwtUtil jwtUtil;
 	
 	@Autowired
 	private SimpMessagingTemplate simpMessageTemplate;
@@ -62,7 +66,7 @@ public class PersonController {
 	@PostMapping("/logoutUser")
 	public UserStatus logoutUser(@RequestBody Person user, @RequestHeader("Authorization") String token) throws Exception{
 		token = token.replace("Bearer ","");
-		AuthenticateToken authToken = authTokenService.getAuthToken(token);
+		AuthenticateToken authToken = authTokenService.getAuthToken(jwtUtil.getIdFromToken(token));
 				authToken.setIsActive(false);
 		authTokenService.saveToken(authToken);
 		//personService.updateSessionIdByUserId(null,false,user.getId());
