@@ -27,6 +27,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
@@ -49,40 +50,21 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer{
 		.withSockJS();
 	}
 
+
+	@Override
+	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+		registration.setMessageSizeLimit(200000); // default : 64 * 1024
+		registration.setSendTimeLimit(20 * 10000); // default : 10 * 10000
+		registration.setSendBufferSizeLimit(3 * 512 * 1024); // default : 512 * 1024
+
+	}
+
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		registry.setApplicationDestinationPrefixes("/app")
 				.enableSimpleBroker("/topic");
 	}
 
-//	@Override
-//	public void configureClientInboundChannel(ChannelRegistration registration) {
-//		registration.interceptors(new ChannelInterceptor() {
-//			@Override
-//			public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//				StompHeaderAccessor accessor =
-//						MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//				if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-//					List<String> authorization = accessor.getNativeHeader("userId");
-//					System.out.println("X-Authorization: {}"+ authorization);
-//					Long id = Long.parseLong(authorization.get(0));
-//					Optional<Person> person = personService.getUserByUserId(id);
-////					Optional<Person> opt = Optional.of(person);
-//					accessor.setUser((Principal) person.map(MyUserDetails::new).get());
-//				}
-////				if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-////					//List<String> authorization = accessor.getNativeHeader("X-Authorization");
-////					List<String> authorization = accessor.getNativeHeader("X-email");
-////					System.out.println("X-Authorization: {}"+ authorization);
-////					String email = authorization.get(0);
-//////					Optional<Person> person = personService.getUserByUsername(email);
-//////					accessor.setUser((Principal) person.map(MyUserDetails::new).get());
-////				}
-//				return message;
-//			}
-//		});
-//	}
-	
 	public class MyHandshakeHandler extends DefaultHandshakeHandler implements HandshakeInterceptor {
 
 		@Override
