@@ -13,10 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -49,10 +46,29 @@ public class AuthController {
         UserDetails details = userDetailsService.loadUserByUsername(request.getEmail());
         MyUserDetails user = (MyUserDetails) details;
         String token = jwtUtil.generateToken(user);
-        AuthenticateToken authToken = new AuthenticateToken(token,true);
+        String refreshTokenString = jwtUtil.generateRefreshToken(user);
+        AuthenticateToken authToken = new AuthenticateToken(null,true,"ACCESS",jwtUtil.getIdFromToken(token));
+        AuthenticateToken refreshToken = new AuthenticateToken(null,true,"REFRESH",jwtUtil.getIdFromToken(refreshTokenString));
         System.out.println(authToken);
         authTokenService.saveToken(authToken);
-        AuthResponse response = new AuthResponse(user.getId(),token);
+        authTokenService.saveToken(refreshToken);
+        AuthResponse response = new AuthResponse(user.getId(),token,refreshTokenString);
+        return response;
+
+    }
+
+    @GetMapping("/refreshToken/{email}")
+    public AuthResponse getRefreshToken(@PathVariable String email) throws Exception {
+
+        UserDetails details = userDetailsService.loadUserByUsername(email);
+        MyUserDetails user = (MyUserDetails) details;
+        String token = jwtUtil.generateToken(user);
+        String tokenId = jwtUtil.getIdFromToken(token);
+        AuthenticateToken authToken = new AuthenticateToken(null,true,"ACCESS",tokenId);
+        authTokenService.saveToken(authToken);
+        AuthResponse response = new AuthResponse();
+        response.setUserId(user.getId());
+        response.setToken(token);
         return response;
 
     }

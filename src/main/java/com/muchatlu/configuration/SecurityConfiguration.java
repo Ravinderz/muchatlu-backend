@@ -1,5 +1,6 @@
 package com.muchatlu.configuration;
 
+import com.muchatlu.filter.ExceptionHandlerFilter;
 import com.muchatlu.filter.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
 	@Autowired
 	private JwtFilter jwtFilter;
+
+	@Autowired
+	private ExceptionHandlerFilter exceptionFilter;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -58,6 +62,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
+				.addFilterBefore(exceptionFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 			http.headers().frameOptions().disable();
 	}

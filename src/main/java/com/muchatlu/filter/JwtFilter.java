@@ -1,11 +1,14 @@
 package com.muchatlu.filter;
 
+import com.amazonaws.services.elasticache.model.UserAlreadyExistsException;
 import com.muchatlu.exception.InvalidSessionException;
+import com.muchatlu.exception.JwtExpiredException;
 import com.muchatlu.model.AuthenticateToken;
 import com.muchatlu.model.MyUserDetails;
 import com.muchatlu.service.AuthenticationTokenService;
 import com.muchatlu.service.MyUserDetailsService;
 import com.muchatlu.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -35,33 +38,51 @@ public class JwtFilter extends OncePerRequestFilter {
     private AuthenticationTokenService authService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         String authorization = request.getHeader("Authorization");
+        String isRefreshToken = request.getHeader("isRefreshToken");
         String token = null;
         String username = null;
+        String jwtId = null;
+        System.out.println("isRefreshToken :: "+isRefreshToken);
+        System.out.println("SecurityContextHolder.getContext().getAuthentication()"+SecurityContextHolder.getContext().getAuthentication());
+        try {
+            if (null != authorization && authorization.startsWith("Bearer ")) {
+                token = authorization.substring(7);
+                System.out.println("token");
+                username = jwtUtil.getUsernameFromToken(token);
+                System.out.println("username"+username);
+                jwtId = jwtUtil.getIdFromToken(token);
+                System.out.println("jwtId"+jwtId);
+                AuthenticateToken authToken = authService.getAuthToken(jwtId);
+                if (authToken != null && !authToken.getIsActive()) {
+                    throw new InvalidSessionException("Session Expired");
+                }
 
-        if(null != authorization && authorization.startsWith("Bearer ")){
-            token = authorization.substring(7);
-            username = jwtUtil.getUsernameFromToken(token);
-            AuthenticateToken authToken = authService.getAuthToken(token);
-            if(authToken != null && !authToken.getIsActive()){
-                throw new InvalidSessionException("Session Expired");
             }
 
-        }
+            if (null != username && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                MyUserDetails details = (MyUserDetails) userDetails;
 
-        if(null != username && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            MyUserDetails details = (MyUserDetails) userDetails;
-            if(jwtUtil.validateToken(token,details)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(details,null,details .getAuthorities());
-                authToken.setDetails( new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContext securityContext = SecurityContextHolder.getContext();
-                securityContext.setAuthentication(authToken);
-                HttpSession session = request.getSession(true);
-                session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+//                if (isRefreshToken != null && isRefreshToken.equalsIgnoreCase("true")) {
+//
+//                } else {
+                    if (jwtUtil.validateToken(token, details)) {
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContext securityContext = SecurityContextHolder.getContext();
+                        securityContext.setAuthentication(authToken);
+                        HttpSession session = request.getSession(true);
+                        session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+                    }
+//                }
+
+
             }
+        }catch(ExpiredJwtException ex){
+            throw new JwtExpiredException("JWT token Expired");
         }
         filterChain.doFilter(request,response);
     }

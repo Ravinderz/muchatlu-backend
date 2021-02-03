@@ -12,7 +12,7 @@ public class AuthenticationTokenService {
     AuthenticationTokenRepository repo;
 
     public AuthenticateToken getAuthToken(String token){
-        return repo.findByToken(token);
+        return repo.findByTokenId(token);
     }
 
     public AuthenticateToken saveToken(AuthenticateToken token){

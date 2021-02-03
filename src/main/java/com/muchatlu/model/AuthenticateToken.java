@@ -21,10 +21,14 @@ public class AuthenticateToken {
     private Long id;
     private String token;
     private Boolean isActive;
+    private String type;
+    private String tokenId;
 
-    public AuthenticateToken(String token,Boolean isActive){
+    public AuthenticateToken(String token,Boolean isActive,String type,String tokenId){
         this.token = token;
         this.isActive = isActive;
+        this.type = type;
+        this.tokenId = tokenId;
     }
 
 
