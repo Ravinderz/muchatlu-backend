@@ -35,6 +35,7 @@ public class Person {
 	public String avatar;
 	public Boolean isOnline;
 	public String status;
+	public String userPushToken;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="UserFriends",

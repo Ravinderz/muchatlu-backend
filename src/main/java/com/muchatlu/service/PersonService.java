@@ -69,7 +69,19 @@ public class PersonService {
 	public List<Person> getAllUsers(){
 		return new ArrayList<>(personRepo.findAll());
 	}
-	
+
+	@Transactional
+	public int updateUnreadMessageByConversationId(Long conversationId,String actionTaker){
+		Integer i = 0;
+		if(actionTaker.equalsIgnoreCase("From")){
+			i = personRepo.updateReadMessageForFromUser(conversationId);
+		}else if(actionTaker.equalsIgnoreCase("To")){
+			i = personRepo.updateReadMessageForToUser(conversationId);
+		}
+
+		return i;
+	}
+
 	public List<Person> saveAllUsers(List<Person> users){
 		return personRepo.saveAll(users);
 	}
@@ -117,9 +129,24 @@ public class PersonService {
 		return person;
 	}
 
+	@Transactional
+	public Person updateUserPresence(Person person){
+		personRepo.updatePresence(person.getIsOnline(), person.getId());
+		return person;
+	}
+
 	public UserStatus getUserOnlinePresence(Long id){
 		UserStatus status = new UserStatus(id,"",personRepo.getUserOnlinePresence(id));
 		return status;
+	}
+
+	public String getUserPushToken(Long id){
+		return personRepo.getUserPushToken(id);
+	}
+
+	@Transactional
+	public void updateUserPushToken(Person person){
+		personRepo.updateUserPushToken(person.getUserPushToken(), person.getId());
 	}
 
 	public List<Person> getFilterFriends(Long id,String text){

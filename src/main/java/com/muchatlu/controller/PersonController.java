@@ -78,6 +78,11 @@ public class PersonController {
 	public List<Person> getAllUsers(){
 		return personService.getAllUsers();
 	}
+
+	@PutMapping("/updateUnreadMessages/{conversationId}/{actionTaker}")
+	public Integer updateUnreadMessages(@PathVariable("conversationId") Long conversationId, @PathVariable("actionTaker") String actionTaker){
+		return personService.updateUnreadMessageByConversationId(conversationId,actionTaker);
+	}
 	
 	@GetMapping("/getAllFriends/{userId}")
 	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
@@ -177,6 +182,26 @@ public class PersonController {
 	public Person updateUserDetails(@RequestBody Person person, @AuthenticationPrincipal UserDetails userDetails){
 		if(authorizationService.validateRequest("updateUserDetails","self",person,(MyUserDetails)userDetails)) {
 			return personService.updateUserDetails(person);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
+	}
+
+	@PutMapping("/updateUserPresence")
+	public Person updateUserPresence(@RequestBody Person person, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("updateUserDetails","self",person,(MyUserDetails)userDetails)) {
+			return personService.updateUserPresence(person);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
+	}
+
+
+
+	@PutMapping("/updateUserPushToken")
+	public void updateUserPushToken(@RequestBody Person person, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("updateUserDetails","self",person,(MyUserDetails)userDetails)) {
+			personService.updateUserPushToken(person);
 		}else{
 			throw new NotAuthorizedException("Not Authorized");
 		}

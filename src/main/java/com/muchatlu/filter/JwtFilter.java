@@ -45,16 +45,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
         String jwtId = null;
-        System.out.println("isRefreshToken :: "+isRefreshToken);
-        System.out.println("SecurityContextHolder.getContext().getAuthentication()"+SecurityContextHolder.getContext().getAuthentication());
+
         try {
             if (null != authorization && authorization.startsWith("Bearer ")) {
                 token = authorization.substring(7);
-                System.out.println("token");
                 username = jwtUtil.getUsernameFromToken(token);
-                System.out.println("username"+username);
                 jwtId = jwtUtil.getIdFromToken(token);
-                System.out.println("jwtId"+jwtId);
                 AuthenticateToken authToken = authService.getAuthToken(jwtId);
                 if (authToken != null && !authToken.getIsActive()) {
                     throw new InvalidSessionException("Session Expired");

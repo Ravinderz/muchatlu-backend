@@ -27,14 +27,33 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 	int updateSessionIdForAUser(@Param("sessionId") String sessionId,@Param("isOnline") boolean isOnline, @Param("id") Long id);
 
 	@Modifying
+	@Query(value = "update Message set from_read  = true where conversation_id = :conversationId",nativeQuery = true)
+	int updateReadMessageForFromUser(@Param("conversationId") Long conversationId);
+
+	@Modifying
+	@Query(value = "update Message set to_read  = true where conversation_id = :conversationId",nativeQuery = true)
+	int updateReadMessageForToUser(@Param("conversationId") Long conversationId);
+
+	@Modifying
 	@Query("update Person set status  = :status where id = :id")
 	int updateStatus(@Param("status") String status, @Param("id") Long id);
+
+	@Modifying
+	@Query("update Person set isOnline  = :status where id = :id")
+	int updatePresence(@Param("status") Boolean status, @Param("id") Long id);
 
 	@Query("select avatar from Person where id = :id")
 	String getUserAvatar(@Param("id") Long id);
 
 	@Query("select isOnline from Person where id = :id")
 	Boolean getUserOnlinePresence(@Param("id") Long id);
+
+	@Query("select userPushToken from Person where id = :id")
+	String getUserPushToken(@Param("id") Long id);
+
+	@Modifying
+	@Query("update Person set userPushToken  = :token where id = :id")
+	void updateUserPushToken(@Param("token") String token, @Param("id") Long id);
 
 	@Query(value = "SELECT count(*) FROM user_friends " +
 			"WHERE (" +
