@@ -52,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		http.cors().and()
 			.csrf().disable()
 			.authorizeRequests()
-			.antMatchers("/register","/authenticate","/chat/**","/h2-console/**","ws://**")
+			.antMatchers("/register","/authenticate","/chat/**","/h2-console/**","ws://**","wss://**")
 			.permitAll()
 			.anyRequest()
 			.authenticated()
@@ -86,7 +86,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	CorsConfigurationSource corsConfigurationSource()
 	{
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com","https://www.muchatlu.in","http://www.muchatlu.in"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://www.muchatlu.in","http://www.muchatlu.in","https://muchatlu-ui.herokuapp.com","http://muchatlu-ui.herokuapp.com"));
 		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS","HEAD","DELETE"));
 		configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin",
