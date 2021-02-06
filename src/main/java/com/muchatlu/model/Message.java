@@ -25,6 +25,11 @@ public class Message {
 	private Long userIdTo;
 	private String timestamp;
 	private String message;
+	private Boolean fromRead;
+	private Boolean toRead;
+	private String type;
+	@Lob
+	private byte[] data;
 
 	@Column(name="CONVERSATION_ID")
 	private Long conversationId;
