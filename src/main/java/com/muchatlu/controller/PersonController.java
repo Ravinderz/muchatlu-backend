@@ -149,6 +149,15 @@ public class PersonController {
 		}
 	}
 
+	@GetMapping("/getConversationV2/{id}/{userId}")
+	public Conversation getConversationV2(@PathVariable("id") Long id,@PathVariable("userId") Long userId, @AuthenticationPrincipal UserDetails userDetails){
+		if(authorizationService.validateRequest("getConversationV2","self", userId,(MyUserDetails)userDetails)) {
+			return conversationService.getConversation(id);
+		}else{
+			throw new NotAuthorizedException("Not Authorized");
+		}
+	}
+
 	@GetMapping("/getUserConversations/{id}")
 	public List<ConversationDto> getUserConversations(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetails userDetails){
 		if(authorizationService.validateRequest("getUserConversations","self",id,(MyUserDetails)userDetails)) {
