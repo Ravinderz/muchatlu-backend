@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,9 +27,7 @@ public class Conversation {
 	private Long userIdTo;
 	@OneToMany
 	@JoinColumn(name="CONVERSATION_ID", referencedColumnName="ID")
-	private List<Message> message;
-//
-//	@Transient
-//	private Map<Long,List<Message>> chats;
+	private Set<Message> message;
+
 	
 }
