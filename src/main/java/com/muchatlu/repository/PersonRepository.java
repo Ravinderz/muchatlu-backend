@@ -18,7 +18,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>{
 	
 	Optional<Person> findById(Long id);
 	
-	Optional<Person> findByEmailContainingIgnoreCase(String email);
+	Optional<Person> findByEmail(String email);
 	
 	Optional<Person> findBySessionId(String sessionId);
 	
