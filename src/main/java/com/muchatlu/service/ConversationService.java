@@ -6,6 +6,7 @@ import com.muchatlu.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -53,6 +54,8 @@ public class ConversationService {
 
 		return convo;
 	}
+
+	@Transactional
 	public Conversation getConversation(Long id){
 
 		Conversation convo = repo.findByConvoId(id);

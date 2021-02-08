@@ -15,6 +15,7 @@ import com.muchatlu.model.Message;
 import com.muchatlu.repository.MessageRepository;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +61,7 @@ public class MessageService {
 		}
 	}
 
+	@Transactional
 	public List<Message> getMessagesByConversationId(Long conversationId){
 		return messageRepo.getMessagesByConversationId(conversationId);
 	}
