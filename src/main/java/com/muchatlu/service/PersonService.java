@@ -23,7 +23,7 @@ public class PersonService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public Person register(Person user) {
-		Optional<Person> newUser = personRepo.findByEmailContainingIgnoreCase(user.getEmail().toLowerCase());
+		Optional<Person> newUser = personRepo.findByEmail(user.getEmail().toLowerCase());
 		if(newUser.isPresent()){
 			throw new UserExistsException("User already exists");
 		}
@@ -34,7 +34,7 @@ public class PersonService {
 	}
 	
 	public Person login(Person user) {
-		return personRepo.findByEmailAndPassword(user.getEmail(), user.getPassword());
+		return personRepo.findByEmailAndPassword(user.getEmail().toLowerCase(), user.getPassword());
 	}
 	
 	public Person getUserBySessionId(String sessionId) {
@@ -63,7 +63,7 @@ public class PersonService {
 	}
 	
 	public Optional<Person> getUserByUsername(String email) {
-		return personRepo.findByEmailContainingIgnoreCase(email);
+		return personRepo.findByEmail(email.toLowerCase());
 	}
 	
 	public List<Person> getAllUsers(){
@@ -108,8 +108,8 @@ public class PersonService {
 	public Person getUserDetails(String value){
 		Person person = new Person();
 		Optional<Person> optionalPerson;
-		if(value.contains("@")){
-			optionalPerson = personRepo.findByEmailContainingIgnoreCase(value);
+		if(value != null && value.contains("@")){
+			optionalPerson = personRepo.findByEmail(value.toLowerCase());
 		}else{
 			optionalPerson = personRepo.findById(Long.parseLong(value));
 		}

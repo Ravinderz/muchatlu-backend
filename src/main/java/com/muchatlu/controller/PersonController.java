@@ -86,7 +86,6 @@ public class PersonController {
 	
 	@GetMapping("/getAllFriends/{userId}")
 	public Person getFriendsOfUser(@PathVariable Long userId, @AuthenticationPrincipal UserDetails userDetails){
-		System.out.println("principal"+((MyUserDetails)userDetails).getEmail());
 		if(authorizationService.validateRequest("getAllFriends","self",userId,(MyUserDetails)userDetails)){
 			return personService.getUserById(userId);
 		}else{
