@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Conversation {
 
@@ -20,14 +18,28 @@ public class Conversation {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private Long userIdFrom;
+	private Long userIdTo;
 	private String usernameFrom;
+	private String usernameTo;
 	private String avatarFrom;
 	private String avatarTo;
-	private String usernameTo;
-	private Long userIdTo;
+
+
 	@OneToMany
 	@JoinColumn(name="CONVERSATION_ID", referencedColumnName="ID")
-	private Set<Message> message;
+	private List<Message> message;
 
-	
+	public Conversation() {
+
+	}
+
+	public Conversation(Long id, Long userIdFrom,  Long userIdTo, String usernameFrom,String usernameTo,String avatarFrom,String avatarTo) {
+		this.id = id;
+		this.userIdFrom = userIdFrom;
+		this.usernameFrom = usernameFrom;
+		this.avatarFrom = avatarFrom;
+		this.avatarTo = avatarTo;
+		this.usernameTo = usernameTo;
+		this.userIdTo = userIdTo;
+	}
 }

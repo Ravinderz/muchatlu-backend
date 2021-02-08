@@ -18,6 +18,9 @@ public class ConversationService {
 	@Autowired
 	PersonService personService;
 
+	@Autowired
+	MessageService messageService;
+
 	public List<Conversation> saveConversation(FriendRequestModel request){
 		String fromAvatar = personService.getUserAvatar(request.getRequestFromUserId());
 		String toAvatar = personService.getUserAvatar(request.getRequestToUserId());
@@ -46,6 +49,16 @@ public class ConversationService {
 		Conversation convo = repo.findByUserIdFromAndUserIdTo(fromId, toId);
 		if(convo == null){
 			convo = repo.findByUserIdFromAndUserIdTo(toId,fromId);
+		}
+
+		return convo;
+	}
+	public Conversation getConversation(Long id){
+
+		Conversation convo = repo.findByConvoId(id);
+		if(convo != null){
+			List<Message> messageList = messageService.getMessagesByConversationId(convo.getId());
+			convo.setMessage(messageList);
 		}
 
 		return convo;

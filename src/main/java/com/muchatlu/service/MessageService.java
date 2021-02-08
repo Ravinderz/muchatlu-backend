@@ -19,6 +19,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class MessageService {
@@ -50,13 +51,17 @@ public class MessageService {
 				HttpHeaders headers = new HttpHeaders();
 				headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 				headers.set("Authorization","Bearer "+token);
-				PushNotificationObject obj = new PushNotificationObject(userPushToken,message.getUsernameFrom(),message.getMessage(),message);
+				PushNotificationObject obj = new PushNotificationObject(userPushToken,message.getUsernameFrom(),message.getMessage(),null);
 				HttpEntity<PushNotificationObject> entity = new HttpEntity<>(obj,headers);
 				Object resp =  restTemplate.exchange(
 						"https://exp.host/--/api/v2/push/send", HttpMethod.POST, entity, Object.class).getBody();
 			}
 
 		}
+	}
+
+	public List<Message> getMessagesByConversationId(Long conversationId){
+		return messageRepo.getMessagesByConversationId(conversationId);
 	}
 	
 }
